@@ -5,8 +5,6 @@ echo -e "\n\n"
 workdir="/data/a2e/pbaduel/SPLITREADER"
 project_dir='/workspaces/a2e/pbaduel/EPICTEA'
 
-setName0='1001g'
-
 bamext='dupl_fixed_paired'
 
 cd $workdir
@@ -42,7 +40,7 @@ echo -e "\n\n"
 
 cd $workdir
 
-setName='steve'
+setName='qlife'
 if [ ! -d $setName ]; then
     mkdir ./$setName
 fi
@@ -57,16 +55,13 @@ echo -e "$fqNB samples: ${fqNames[*]}\n\n"
 for (( fq=0; fq<$fqNB; fq++ ))  
     do
     popname=${fqNames[$fq]}
-    popname=7067
     echo -e -n "\t$popname...\t"
     
     echo "processing"
     cd $workdir/BAMs
-    # rm -f $workdir/BAMs/*
 
-    # align on reference genome (bwa-mem too lax in mapping so splitreads end up being mapped)
-
-    # bowtie2 --mp 13 --rdg 8,5 --rfg 8,5 -x $workdir/Reference/TAIR10 -1 $workdir/fastq/$popname.Chr2.1.fastq -2 $workdir/fastq/$popname.Chr2.2.fastq -S $workdir/BAMs/$popname.Chr2.sam -p 2
+    # align on reference genome
+    bowtie2 --mp 13 --rdg 8,5 --rfg 8,5 -x $workdir/Reference/TAIR10 -1 $workdir/fastq/$popname.Chr2.1.fastq -2 $workdir/fastq/$popname.Chr2.2.fastq -S $workdir/BAMs/$popname.Chr2.sam -p 2
 
     # convert in bam, sort and index
     samtools view -bS $workdir/BAMs/$popname.Chr2.sam > $workdir/BAMs/$popname.Chr2.bam
@@ -91,7 +86,6 @@ for (( fq=0; fq<$fqNB; fq++ ))
         mkdir ./part2
     fi
     cd $workdir/$setName/$popname/part2
-    rm -rf $workdir/$setName/$popname/part2/*
     $workdir/scripts/SPLITREADER-beta1.5_part2.sh $popname $setName $workdir Reference/TAIR10 TAIR10_Quesneville_GFF3_transposons_only
 
 done
